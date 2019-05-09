@@ -43,7 +43,7 @@ function preload () {
 
     //Bullet Stuff
     // this.load.image('shoot1', '1.png');
-    this.load.image('bullet', '2.png');
+    this.load.image('bullet', 'bullet.png');
     // this.load.image('shoot3', '3.png');
     // this.load.image('shoot4', '4.png');
     // this.load.image('shoot5', '5.png');
@@ -73,7 +73,7 @@ function create ()
         {
             Phaser.GameObjects.Image.call(this, scene, 0, 0, 'bullet');
 
-            this.speed = Phaser.Math.GetSpeed(400, 1);
+            this.speed = Phaser.Math.GetSpeed(700, 1);
         },
 
         fire: function (x, y)
@@ -86,16 +86,17 @@ function create ()
 
         update: function (time, delta)
         {
-            if(boi.x > dragon.x){
-                this.x -= this.speed * delta;
-            } else{
-                this.x += this.speed * delta;
-            }
+            this.x -= this.speed * delta;
 
             if (this.x < -50)
             {
                 this.setActive(false);
                 this.setVisible(false);
+            }
+
+            if(this.y == dragon.y){
+                dragonHealth = dragonHealth -= 1;
+                console.log('dragonHealth', dragonHealth);
             }
         }
 
@@ -103,7 +104,7 @@ function create ()
 
     bullets = this.add.group({
         classType: Bullet,
-        maxSize: 100,
+        maxSize: 20,
         runChildUpdate: true
     });
 
@@ -216,7 +217,7 @@ function updateDirect (time, delta) {
         {
             bullet.fire(boi.x, boi.y);
 
-            lastFired = time + 50;
+            lastFired = time + 5;
         }
     }
 }

@@ -152,7 +152,7 @@ function create ()
         frameRate: 10,
         repeat: -1
     });
-    dragon = this.add.sprite(400, 300, 'fly0').play('fly');
+    dragon = this.add.sprite(0, 200, 'fly0').play('fly');
 
     //Bullet Stuff
     // this.anims.create({
@@ -193,17 +193,17 @@ function updateDirect (time, delta) {
 
     if(boi.x < dragon.x){
         dragon.setAngle(179);
-        dragon.x -= 2;
+        dragon.x -= 1;
     }
     else if(boi.x > dragon.x){
         dragon.setAngle(0);
-        dragon.x += 2;
+        dragon.x += 1;
     }
     if(boi.y < dragon.y){
-        dragon.y -= 2;
+        dragon.y -= 1;
     }
     else if(boi.y > dragon.y){
-        dragon.y += 2;
+        dragon.y += 1;
     }
     else{
         dragon.setAngle(0);

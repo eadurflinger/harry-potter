@@ -10,7 +10,7 @@ var config = {
         }
     },
     audio: {
-        disableWebAudio: true
+        disableWebAudio: false
     },
     scene: {
         preload: preload,
@@ -22,35 +22,35 @@ var config = {
 var game = new Phaser.Game(config);
 
 function preload () {
-    this.load.tilemapTiledJSON('map', '/harrypotter.json');
+    this.load.tilemapTiledJSON('map', './harrypotter.json');
     // this.load.image('tiles', '/Tileset.png');
-    this.load.image('background', '/mountains2.png');
+    this.load.image('background', './mountains2.png');
     this.load.image('harry', './harry.png');
 
-    this.load.image('fly0', 'Flight_000.png');
-    this.load.image('fly1', 'Flight_001.png');
-    this.load.image('fly2', 'Flight_002.png');
-    this.load.image('fly3', 'Flight_003.png');
-    this.load.image('fly4', 'Flight_004.png');
-    this.load.image('fly5', 'Flight_005.png');
-    this.load.image('fly6', 'Flight_006.png');
-    this.load.image('fly7', 'Flight_007.png');
-    this.load.image('fly8', 'Flight_008.png');
-    this.load.image('fly9', 'Flight_009.png');
-    this.load.image('fly10', 'Flight_010.png');
-    this.load.image('fly11', 'Flight_011.png');
-    this.load.image('fly12', 'Flight_012.png');
+    this.load.image('fly0', './Flight_000.png');
+    this.load.image('fly1', './Flight_001.png');
+    this.load.image('fly2', './Flight_002.png');
+    this.load.image('fly3', './Flight_003.png');
+    this.load.image('fly4', './Flight_004.png');
+    this.load.image('fly5', './Flight_005.png');
+    this.load.image('fly6', './Flight_006.png');
+    this.load.image('fly7', './Flight_007.png');
+    this.load.image('fly8', './Flight_008.png');
+    this.load.image('fly9', './Flight_009.png');
+    this.load.image('fly10', './Flight_010.png');
+    this.load.image('fly11', './Flight_011.png');
+    this.load.image('fly12', './Flight_012.png');
 
     //Bullet Stuff
     // this.load.image('shoot1', '1.png');
-    this.load.image('bullet', 'bullet.png');
+    this.load.image('bullet', './bullet.png');
     // this.load.image('shoot3', '3.png');
     // this.load.image('shoot4', '4.png');
     // this.load.image('shoot5', '5.png');
     // this.load.image('shoot6', '6.png');
     // this.load.image('shoot7', '7.png');
 
-    this.load.audio('goldenEgg', '/10 - Golden Egg.mp3');
+    this.load.audio('goldenEgg', './10 - Golden Egg.mp3');
 
 }
 var boi;

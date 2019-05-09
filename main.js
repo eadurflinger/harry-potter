@@ -1,6 +1,6 @@
 var config = {
     type: Phaser.AUTO,
-    width: 6400,
+    width: 1800,
     height: 1000,
     physics: {
         default: 'arcade',
@@ -9,10 +9,13 @@ var config = {
             debug: false
         }
     },
+    audio: {
+        disableWebAudio: true
+    },
     scene: {
         preload: preload,
         create: create,
-        update: updateDirect
+        update: updateDirect,
     }
 };
 
@@ -20,7 +23,7 @@ var game = new Phaser.Game(config);
 
 function preload () {
     this.load.tilemapTiledJSON('map', '/harrypotter.json');
-    this.load.image('tiles', '/Tileset.png');
+    // this.load.image('tiles', '/Tileset.png');
     this.load.image('background', '/mountains2.png');
     this.load.image('harry', './harry.png');
 
@@ -38,33 +41,95 @@ function preload () {
     this.load.image('fly11', 'Flight_011.png');
     this.load.image('fly12', 'Flight_012.png');
 
+    //Bullet Stuff
+    // this.load.image('shoot1', '1.png');
+    this.load.image('bullet', '2.png');
+    // this.load.image('shoot3', '3.png');
+    // this.load.image('shoot4', '4.png');
+    // this.load.image('shoot5', '5.png');
+    // this.load.image('shoot6', '6.png');
+    // this.load.image('shoot7', '7.png');
+
+    this.load.audio('goldenEgg', '/10 - Golden Egg.mp3');
+
 }
 var boi;
 var dragon;
+var bullets;
+var speed;
 var dragonHealth = 100;
 var harryHealth = 100;
+var lastFired = 0;
+
 function create ()
 {
-    this.cameras.main.setBounds(0, 0, 50, 50);
-    this.physics.world.setBounds(0, 0, 6400, 840, true, true, true, true);
+    var Bullet = new Phaser.Class({
+
+        Extends: Phaser.GameObjects.Image,
+
+        initialize:
+
+        function Bullet (scene)
+        {
+            Phaser.GameObjects.Image.call(this, scene, 0, 0, 'bullet');
+
+            this.speed = Phaser.Math.GetSpeed(400, 1);
+        },
+
+        fire: function (x, y)
+        {
+            this.setPosition(x, y);
+
+            this.setActive(true);
+            this.setVisible(true);
+        },
+
+        update: function (time, delta)
+        {
+            if(boi.x > dragon.x){
+                this.x -= this.speed * delta;
+            } else{
+                this.x += this.speed * delta;
+            }
+
+            if (this.x < -50)
+            {
+                this.setActive(false);
+                this.setVisible(false);
+            }
+        }
+
+    });
+
+    bullets = this.add.group({
+        classType: Bullet,
+        maxSize: 100,
+        runChildUpdate: true
+    });
+
+    speed = Phaser.Math.GetSpeed(300, 1);
+
+    this.cameras.main.setBounds(0, 0, 4000, 900);
+    this.physics.world.setBounds(0, 0, 5700, 900, true, true, true, true);
 
     const map = this.make.tilemap({key:'map', tileWidth: 32, tileHeight: 32});
-    var background = this.add.tileSprite(0, 0, 5000, 2200, 'background');
-    const main = map.addTilesetImage('harrypotter', 'tiles');
+    var background = this.add.tileSprite(1150, 0, 5700, 2150, 'background');
+    // const main = map.addTilesetImage('harrypotter', 'tiles');
     boi = this.physics.add.sprite(50, 600, 'harry').setAngle(0);
-
-    const playerWalks = map.createStaticLayer('player-walks', main, 0, 0);
+    // const playerWalks = map.createStaticLayer('player-walks', main, 0, 0);
 
     boi.setBounce(0.2);
     boi.setCollideWorldBounds(true)
     boi.onWorldBounds = true
 
+    var music = this.sound.add('goldenEgg');
+    music.play();
+
     cursors = this.input.keyboard.createCursorKeys();
 
-    this.cameras.main.startFollow(boi, true, 50, 50);
+    this.cameras.main.startFollow(boi, true, 0.08, 0.08);
 
     this.cameras.main.setZoom(1);
-    this.physics.add.collider(boi, playerWalks);
 
     this.anims.create({
         key: 'fly',
@@ -87,9 +152,26 @@ function create ()
         repeat: -1
     });
     dragon = this.add.sprite(400, 300, 'fly0').play('fly');
+
+    //Bullet Stuff
+    // this.anims.create({
+    //     key: 'shoot',
+    //     frames: [
+    //         { key: 'shoot1', frame: null },
+    //         { key: 'shoot2', frame: null },
+    //         { key: 'shoot3', frame: null },
+    //         { key: 'shoot4', frame: null },
+    //         { key: 'shoot5', frame: null },
+    //         { key: 'shoot6', frame: null },
+    //         { key: 'shoot7', frame: null, duration: 50 }
+    //     ],
+    //     frameRate: 5,
+    //     repeat: -1
+    // });
+    // bullet = this.add.sprite(400, 300, 'shoot1').play('shoot');
 }
 
-function updateDirect () {
+function updateDirect (time, delta) {
     if (cursors.left.isDown && boi.x > 0) {
         boi.setAngle(179);
         boi.x -= 2.5;
@@ -106,6 +188,36 @@ function updateDirect () {
     else if (cursors.down.isDown && boi.y < 1280) {
         boi.setAngle(90);
         boi.y += 2.5;
+    }
+
+    if(boi.x < dragon.x){
+        dragon.setAngle(179);
+        dragon.x -= 2;
+    }
+    else if(boi.x > dragon.x){
+        dragon.setAngle(0);
+        dragon.x += 2;
+    }
+    if(boi.y < dragon.y){
+        dragon.y -= 2;
+    }
+    else if(boi.y > dragon.y){
+        dragon.y += 2;
+    }
+    else{
+        dragon.setAngle(0);
+    }
+    if (cursors.space.isDown && time > lastFired)
+    {
+        console.log('fire')
+        var bullet = bullets.get();
+
+        if (bullet)
+        {
+            bullet.fire(boi.x, boi.y);
+
+            lastFired = time + 50;
+        }
     }
 }
 
@@ -124,5 +236,17 @@ function update () {
     }
     else if (cursors.down.isDown) {
         boi.setVelocityY(400);
+    }
+    if(boi.x < dragon.x){
+        dragon.setVelocityX(-600);
+    }
+    else if(boi.x > dragon.x){
+        dragon.setVelocityX(+600);
+    }
+    if(boi.y < dragon.x){
+        dragon.setVelocityY(-600);
+    }
+    else if(boi.y > dragon.x){
+        dragon.setVelocityY(+600);
     }
 }
